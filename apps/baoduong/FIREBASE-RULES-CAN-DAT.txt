@@ -1,0 +1,29 @@
+QUY TẮC BẢO MẬT FIREBASE CẦN CẬP NHẬT
+=====================================
+Vì tài khoản & phân quyền nay được đồng bộ qua Firebase, cần khoá quyền đọc
+nhánh "users_v2" lại, nếu không người ngoài biết địa chỉ database có thể đọc
+được danh sách tài khoản.
+
+Cách làm: Firebase Console -> Realtime Database -> tab "Rules" -> dán nội dung
+dưới đây -> bấm "Publish".
+
+{
+  "rules": {
+    "dm":  { ".read": true,  ".write": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'" },
+    "kh":  { ".read": true,  ".write": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'" },
+    "hh":  { ".read": true,  ".write": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'" },
+    "ai_config": { ".read": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'",
+                   ".write": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'" },
+    "users_v2":  { ".read": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'",
+                   ".write": "query.auth === 'pgdOIytgrg2ftWqhrkvffJtm2sEAloJPYoDCaTft'" }
+  }
+}
+
+LƯU Ý QUAN TRỌNG KHÁC
+---------------------
+Kho mã nguồn GitHub đang để chế độ Public, nghĩa là ai cũng đọc được chuỗi bí
+mật ở trên và mật khẩu Admin mặc định. Nên làm 2 việc:
+  1. Đổi kho GitHub sang Private (Settings -> General -> Danger Zone -> Change
+     repository visibility -> Make private). Cloudflare vẫn deploy bình thường.
+  2. Đăng nhập app bằng khoatcmt/1982 rồi vào "👥 Tài khoản" đổi ngay mật khẩu
+     Admin sang mật khẩu dài hơn (tối thiểu 8 ký tự).

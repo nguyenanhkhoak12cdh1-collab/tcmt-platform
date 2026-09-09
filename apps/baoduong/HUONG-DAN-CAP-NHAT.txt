@@ -1,0 +1,41 @@
+HƯỚNG DẪN CẬP NHẬT — GÓI ĐẦY ĐỦ
+================================
+Gói này gồm TẤT CẢ file cần thiết. Chỉ cần tải toàn bộ vào MỘT thư mục duy
+nhất trên GitHub, không phải tạo thư mục con nào cả.
+
+BƯỚC 1 — Tải file lên
+  Mở: https://github.com/nguyenanhkhoak12cdh1-collab/tcmt-platform/upload/main/apps/baoduong
+  Kéo-thả 9 file sau vào (chọn tất cả cùng lúc):
+     index.html        <- app Quản lý bảo dưỡng
+     nk-seed.json      <- dữ liệu mẫu Nhật ký (tải khi cần)
+     logo1.png, logo2.png
+     nl.html           <- app Nhiên liệu
+     cc.html           <- app Chấm công
+     sl.html           <- app Sản lượng
+     lib-xlsx.js       <- thư viện Excel (dùng chung, tải khi cần)
+     lib-exceljs.js    <- thư viện Excel (dùng chung, tải khi cần)
+  Gõ ghi chú rồi bấm "Commit changes". Đợi Cloudflare deploy ~1 phút.
+
+BƯỚC 2 — Dọn file cũ (nếu có)
+  Nếu trong thư mục apps/baoduong còn file thừa tên khác (SL.html viết hoa,
+  baoduong-index.html, portal-index.html...) thì xoá đi cho gọn: bấm vào
+  file -> biểu tượng thùng rác -> Commit changes.
+
+BƯỚC 3 — Đặt lại quyền Firebase (BẮT BUỘC)
+  Xem file FIREBASE-RULES-CAN-DAT.txt. Nếu bỏ qua bước này thì danh sách
+  tài khoản đang để ai cũng đọc được.
+
+BƯỚC 4 — Kiểm tra trên điện thoại
+  Mở https://tcmt-platform.nguyenanhkhoak12cdh1.workers.dev
+  Lần đầu nhớ tải lại trang mạnh (kéo xuống làm mới) để không dính bản cũ
+  còn lưu tạm trong máy.
+  Đăng nhập: khoatcmt / 1982  -> vào đổi mật khẩu ngay ở nút "👥 Tài khoản".
+
+GHI CHÚ KỸ THUẬT
+----------------
+- 3 mục Nhiên liệu / Chấm công / Sản lượng nay TỰ DÒ vị trí file: để chung
+  thư mục (như gói này) hoặc tách thư mục riêng đều chạy được.
+- Khung nhúng tự giãn vừa nội dung nên không còn thanh cuộn lồng nhau —
+  vuốt ở bất kỳ đâu trên màn hình đều cuộn cả trang.
+- Thư viện Excel (1,7 MB) chỉ tải ngầm sau khi trang đã hiện, hoặc khi bấm
+  xuất/nhập Excel. Mở app không phải chờ nữa.
