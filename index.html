@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TCMT Platform · Đội Kỹ thuật - Cơ giới</title>
+<meta name="theme-color" content="#0a1628">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TCMT Platform">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-180.png">
+<link rel="icon" href="./icons/icon-192.png">
+<style>
+  :root{
+    --bg:#0a0b0f; --bar:#0e1015; --bar2:#0a0b0e; --line:#262a35;
+    --ink:#eef1f6; --muted:#8a93a6; --amber:#ffb020; --amber-ink:#1a1102;
+    --cyan:#33c9e8; --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    overscroll-behavior-y:none;}
+  body{display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
+
+  header{
+    flex:0 0 auto; padding:calc(10px + var(--safe-top)) 14px 8px;
+    background:linear-gradient(180deg,var(--bar),var(--bar2));
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .brand .ico{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--amber),#c2660a);
+    display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .brand .tt{font-size:13.5px;font-weight:800;line-height:1.25;}
+  .brand .sb{font-size:10.5px;color:var(--muted);}
+
+  nav.tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;padding-bottom:2px;}
+  nav.tabs::-webkit-scrollbar{display:none;}
+  nav.tabs button{
+    flex:0 0 auto; padding:8px 13px; border-radius:8px; border:1px solid var(--line);
+    background:transparent; color:var(--muted); font:600 11.5px/1 -apple-system,Roboto,sans-serif;
+    cursor:pointer; white-space:nowrap; touch-action:manipulation;
+  }
+  nav.tabs button.on{background:rgba(255,176,32,.12); color:var(--amber); border-color:rgba(255,176,32,.35);}
+
+  main{flex:1 1 auto; position:relative; overflow:hidden;}
+  .panel{position:absolute; inset:0; display:none; overflow:hidden;}
+  .panel.on{display:block;}
+  .panel iframe{width:100%; height:100%; border:0; display:block; background:#0a0b0f;}
+  .loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:10px;color:var(--muted);font-size:12.5px;}
+  .spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,176,32,.25);
+    border-top-color:var(--amber);animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  #updateBar{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-bottom));
+    background:var(--amber);color:var(--amber-ink);padding:10px 14px;border-radius:12px;
+    font:700 12.5px -apple-system,Roboto,sans-serif;display:none;align-items:center;
+    justify-content:space-between;gap:10px;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,.4);}
+  #updateBar button{border:0;background:#1a1102;color:#ffe6b3;padding:7px 12px;border-radius:8px;
+    font:700 12px inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="ico">⚙️</div>
+    <div>
+      <div class="tt">TCMT PLATFORM · Đội KT-CG</div>
+      <div class="sb">Bảo dưỡng · Chấm công · Nhiên liệu · Sản lượng</div>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="on" data-tab="baoduong" data-src="./modules/bao-duong.html">🔧 Bảo dưỡng &amp; Hư hỏng</button>
+    <button data-tab="chamcong" data-src="./modules/cham-cong.html">🗓️ Chấm công</button>
+    <button data-tab="nhienlieu" data-src="./modules/nhien-lieu.html">⛽ Nhiên liệu</button>
+    <button data-tab="sanluong" data-src="./modules/san-luong.html">📊 Sản lượng</button>
+  </nav>
+</header>
+
+<main id="main">
+  <div class="panel on" data-panel="baoduong"><div class="loading"><div class="spin"></div>Đang tải…</div></div>
+  <div class="panel" data-panel="chamcong"><div class="loading"><div class="spin"></div>Đang tải…</div></div>
+  <div class="panel" data-panel="nhienlieu"><div class="loading"><div class="spin"></div>Đang tải…</div></div>
+  <div class="panel" data-panel="sanluong"><div class="loading"><div class="spin"></div>Đang tải…</div></div>
+</main>
+
+<div id="updateBar">
+  <span>🔄 Đã có bản cập nhật mới</span>
+  <button id="updateBtn">Tải lại</button>
+</div>
+
+<script>
+(function(){
+  // ===== Lazy-load từng module: chỉ tạo iframe khi người dùng bấm vào tab lần đầu =====
+  // Nhờ vậy khi mở app KHÔNG tải/parse cả 4 app cùng lúc — chỉ tab đang xem mới tốn tài nguyên.
+  var loaded = {};
+  var tabs = document.querySelectorAll('#tabs button');
+  var panels = document.querySelectorAll('.panel');
+
+  function activate(name){
+    tabs.forEach(function(b){ b.classList.toggle('on', b.dataset.tab===name); });
+    panels.forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
+    if(!loaded[name]){
+      var btn = document.querySelector('#tabs button[data-tab="'+name+'"]');
+      var panel = document.querySelector('.panel[data-panel="'+name+'"]');
+      var ifr = document.createElement('iframe');
+      ifr.src = btn.dataset.src;
+      ifr.loading = 'eager';
+      ifr.setAttribute('allow', 'clipboard-read; clipboard-write');
+      panel.innerHTML = '';
+      panel.appendChild(ifr);
+      loaded[name] = true;
+    }
+  }
+
+  tabs.forEach(function(b){
+    b.addEventListener('click', function(){ activate(b.dataset.tab); });
+  });
+
+  // Tải sẵn tab đầu tiên
+  activate('baoduong');
+
+  // Ghi nhớ tab đang xem để mở lại đúng chỗ lần sau
+  try{
+    var last = localStorage.getItem('tcmt_platform_last_tab');
+    if(last && document.querySelector('#tabs button[data-tab="'+last+'"]')) activate(last);
+  }catch(e){}
+  tabs.forEach(function(b){
+    b.addEventListener('click', function(){
+      try{ localStorage.setItem('tcmt_platform_last_tab', b.dataset.tab); }catch(e){}
+    });
+  });
+})();
+
+// ===== PWA: đăng ký service worker + báo khi có bản cập nhật mới =====
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      reg.addEventListener('updatefound', function(){
+        var nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', function(){
+          if(nw.state==='installed' && navigator.serviceWorker.controller){
+            document.getElementById('updateBar').style.display='flex';
+          }
+        });
+      });
+    }).catch(function(){});
+  });
+  document.getElementById('updateBtn').addEventListener('click', function(){
+    navigator.serviceWorker.getRegistration().then(function(reg){
+      if(reg && reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+      location.reload();
+    });
+  });
+}
+</script>
+</body>
+</html>
